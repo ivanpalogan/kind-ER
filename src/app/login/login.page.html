@@ -1,0 +1,281 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <!-- Background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="login-wrapper">
+    <!-- LOGO -->
+    <div class="hero">
+      <div class="logo-icon">💝</div>
+      <h1 class="logo-name">Kind<span>-ER</span></h1>
+      <p class="tagline">Where hearts meet kindly</p>
+    </div>
+
+    <!-- PANEL -->
+    <div class="panel">
+      <!-- Tab Switch -->
+      <div class="tab-switch">
+        <div
+          class="tab"
+          [class.active]="activeTab === 'login'"
+          (click)="activeTab = 'login'"
+        >
+          Sign In
+        </div>
+        <div
+          class="tab"
+          [class.active]="activeTab === 'register'"
+          (click)="activeTab = 'register'"
+        >
+          Create Account
+        </div>
+      </div>
+
+      <!-- ===== LOGIN FORM ===== -->
+      <form
+        *ngIf="activeTab === 'login'"
+        [formGroup]="loginForm"
+        (ngSubmit)="onLogin()"
+      >
+        <div class="form-group">
+          <ion-label class="field-label">Email</ion-label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <ion-input
+              formControlName="email"
+              type="email"
+              placeholder="your@email.com"
+              class="custom-input"
+            >
+            </ion-input>
+          </div>
+          <p
+            class="field-error"
+            *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+            Please enter a valid email.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <ion-label class="field-label">Password</ion-label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <ion-input
+              formControlName="password"
+              [type]="showLoginPass ? 'text' : 'password'"
+              placeholder="Enter your password"
+              class="custom-input"
+            >
+            </ion-input>
+            <ion-button
+              fill="clear"
+              class="eye-btn"
+              (click)="showLoginPass = !showLoginPass"
+            >
+              {{ showLoginPass ? '🙈' : '👁️' }}
+            </ion-button>
+          </div>
+          <p
+            class="field-error"
+            *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
+            Password is required.
+          </p>
+        </div>
+
+        <div class="forgot">
+          <a (click)="onForgotPassword()">Forgot password?</a>
+        </div>
+
+        <ion-button
+          expand="block"
+          class="btn-main"
+          type="submit"
+          [disabled]="isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Sign In &nbsp;💖</span>
+        </ion-button>
+
+        <div class="divider"><span>or continue with</span></div>
+
+        <div class="social-row">
+          <ion-button
+            fill="outline"
+            class="btn-social"
+            (click)="socialLogin('google')"
+          >
+            🌐 Google
+          </ion-button>
+          <ion-button
+            fill="outline"
+            class="btn-social"
+            (click)="socialLogin('apple')"
+          >
+            🍎 Apple
+          </ion-button>
+          <ion-button
+            fill="outline"
+            class="btn-social"
+            (click)="socialLogin('facebook')"
+          >
+            📘 Facebook
+          </ion-button>
+        </div>
+      </form>
+
+      <!-- ===== REGISTER FORM ===== -->
+      <form
+        *ngIf="activeTab === 'register'"
+        [formGroup]="registerForm"
+        (ngSubmit)="onRegister()"
+      >
+        <div class="name-row">
+          <div class="form-group">
+            <ion-label class="field-label">First Name</ion-label>
+            <div class="input-wrap">
+              <span class="input-icon">🌸</span>
+              <ion-input
+                formControlName="firstName"
+                type="text"
+                placeholder="Ana"
+                class="custom-input"
+              >
+              </ion-input>
+            </div>
+          </div>
+          <div class="form-group">
+            <ion-label class="field-label">Age</ion-label>
+            <div class="input-wrap">
+              <span class="input-icon">🎂</span>
+              <ion-input
+                formControlName="age"
+                type="number"
+                placeholder="24"
+                class="custom-input"
+              >
+              </ion-input>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-label class="field-label">Email</ion-label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <ion-input
+              formControlName="email"
+              type="email"
+              placeholder="your@email.com"
+              class="custom-input"
+            >
+            </ion-input>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-label class="field-label">Password</ion-label>
+          <div class="input-wrap">
+            <span class="input-icon">🔑</span>
+            <ion-input
+              formControlName="password"
+              [type]="showRegPass ? 'text' : 'password'"
+              placeholder="Create a password"
+              class="custom-input"
+              (ionInput)="checkPasswordStrength($event)"
+            >
+            </ion-input>
+            <ion-button
+              fill="clear"
+              class="eye-btn"
+              (click)="showRegPass = !showRegPass"
+            >
+              {{ showRegPass ? '🙈' : '👁️' }}
+            </ion-button>
+          </div>
+          <!-- Strength Bar -->
+          <div class="strength-bar">
+            <div
+              class="strength-seg"
+              [ngClass]="passwordStrength >= 1 ? strengthClass : ''"
+            ></div>
+            <div
+              class="strength-seg"
+              [ngClass]="passwordStrength >= 2 ? strengthClass : ''"
+            ></div>
+            <div
+              class="strength-seg"
+              [ngClass]="passwordStrength >= 3 ? strengthClass : ''"
+            ></div>
+            <div
+              class="strength-seg"
+              [ngClass]="passwordStrength >= 4 ? strengthClass : ''"
+            ></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <ion-label class="field-label">I am a</ion-label>
+          <div class="gender-grid">
+            <div
+              class="gender-opt"
+              *ngFor="let g of genderOptions"
+              [class.selected]="selectedGender === g.value"
+              (click)="selectedGender = g.value"
+            >
+              <span class="g-icon">{{ g.icon }}</span>
+              {{ g.label }}
+            </div>
+          </div>
+        </div>
+
+        <ion-button
+          expand="block"
+          class="btn-main"
+          type="submit"
+          [disabled]="isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">Create Account &nbsp;💝</span>
+        </ion-button>
+
+        <div class="divider"><span>or sign up with</span></div>
+
+        <div class="social-row">
+          <ion-button
+            fill="outline"
+            class="btn-social"
+            (click)="socialLogin('google')"
+          >
+            🌐 Google
+          </ion-button>
+          <ion-button
+            fill="outline"
+            class="btn-social"
+            (click)="socialLogin('apple')"
+          >
+            🍎 Apple
+          </ion-button>
+        </div>
+
+        <p class="terms">
+          By creating an account you agree to our
+          <a (click)="openTerms()">Terms of Service</a> and
+          <a (click)="openPrivacy()">Privacy Policy</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- Bottom switch -->
+    <p class="bottom-switch" *ngIf="activeTab === 'login'">
+      Don't have an account?
+      <a (click)="activeTab = 'register'">Join Kind-ER 💕</a>
+    </p>
+    <p class="bottom-switch" *ngIf="activeTab === 'register'">
+      Already have an account?
+      <a (click)="activeTab = 'login'">Sign in 💖</a>
+    </p>
+  </div>
+</ion-content>
