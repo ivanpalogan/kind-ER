@@ -1,0 +1,7 @@
+{
+  "name": "kin-der",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
